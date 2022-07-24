@@ -242,7 +242,7 @@ namespace FCSG{
                 if(drawMiddle==true){
                     DrawMiddleTexture();
                 }
-                spriteBatch.Draw(texture, new Rectangle(this.x,this.y,this.width,this.height),null,color,rotation,origin,effects,depth);
+                spriteBatch.Draw(texture, new Rectangle(this.x,this.y,this.width,this.height),null,color,rotation,origin,effects,(float)depth);
             }
         }
     }

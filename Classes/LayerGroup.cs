@@ -13,7 +13,7 @@ namespace FCSG{
         /// </summary>
         public LayerGroup(){
             objects=new List<SpriteBase>();
-            comparer=(SpriteBase sb)=>sb.depth;
+            comparer=(SpriteBase sb)=>(float)sb.depth;
         }
         /// <summary>
         /// Construct a new LayerGroup which will sort its sprites by the given delegate

@@ -1,0 +1,10 @@
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\bin\Debug\netcoreapp3.1\FCSG.deps.json
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\bin\Debug\netcoreapp3.1\FCSG.dll
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\bin\Debug\netcoreapp3.1\FCSG.pdb
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\obj\Debug\netcoreapp3.1\FCSG.csproj.AssemblyReference.cache
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\obj\Debug\netcoreapp3.1\FCSG.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\obj\Debug\netcoreapp3.1\FCSG.AssemblyInfoInputs.cache
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\obj\Debug\netcoreapp3.1\FCSG.AssemblyInfo.cs
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\obj\Debug\netcoreapp3.1\FCSG.csproj.CoreCompileInputs.cache
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\obj\Debug\netcoreapp3.1\FCSG.dll
+C:\Users\filip\Documents\Programmi\CSharp\FCSG\obj\Debug\netcoreapp3.1\FCSG.pdb

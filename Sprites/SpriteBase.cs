@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 
 
 namespace FCSG{
@@ -41,7 +42,12 @@ namespace FCSG{
         public Color color; //Used when the sprite is drawn
         public float rotation{get;set;}
         public Vector2 origin{get;set;}
-        public float depth{get;set;}
+        public float? depth{
+            get { return depthVariable; }   
+            set { depthVariable.Set(value);}
+        }
+        public LinkedVariable depthVariable;
+
         public SpriteEffects effects=SpriteEffects.None;
         public bool draw{get;set;} //Wether the sprite will be drawn or not
         public Wrapper wrapper; //The wrapper which contains the sprite
@@ -128,6 +134,9 @@ namespace FCSG{
         public SpriteBase(
             SpriteParameters spriteParameters
         ){
+            if (spriteParameters.spriteBatch == null) {
+                throw new ArgumentNullException();
+            }
             this.spriteBatch = spriteParameters.spriteBatch;
 
             this.wrapper = spriteParameters.wrapper;
@@ -156,8 +165,6 @@ namespace FCSG{
                     Console.WriteLine("Warning: SpriteBase constructor: dictKey is null, thus the object was not added to the dictionary.");
                 }
             }
-
-            this.depth = spriteParameters.depth;
 
             //Position variables
                 if(spriteParameters.x!=null){
@@ -197,6 +204,18 @@ namespace FCSG{
                 else
                     this.heightVariable = new LinkedVariable(this,(SpriteBase sprite) => 100);
                 midHeight = -1;
+
+            //Depth variable
+            if (spriteParameters.depthVariable != null)
+            {
+                Debug.WriteLine("depthVariable is not null");
+                this.depthVariable = new LinkedVariable(this, spriteParameters.depthVariable);
+            }
+            else //Fixed depth is only set if depthVariable is null.
+            {
+                this.depth = spriteParameters.depth;
+            }
+
 
             this.rotation=spriteParameters.rotation;
 

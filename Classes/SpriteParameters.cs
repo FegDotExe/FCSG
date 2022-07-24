@@ -16,7 +16,8 @@ namespace FCSG{
         public LinkedVariableParams originalWidthVariable; //Only for TextSprite
         public LinkedVariableParams originalHeightVariable; //Only for TextSprite
         public Wrapper wrapper;
-        public float depth;
+        public float? depth;
+        public LinkedVariableParams depthVariable;
         public LinkedVariableParams xVariable;
         public int? x;
         public LinkedVariableParams yVariable;
@@ -77,7 +78,8 @@ namespace FCSG{
             LinkedVariableParams originalWidthVariable=null, //Only for TextSprite
             LinkedVariableParams originalHeightVariable=null, //Only for TextSprite
             Wrapper wrapper=null,
-            float depth=0, 
+            float? depth=0, 
+            LinkedVariableParams depthVariable=null,
             LinkedVariableParams xVariable=null,
             int? x=null,
             LinkedVariableParams yVariable=null,
@@ -136,6 +138,9 @@ namespace FCSG{
             //Size variables
                 this.widthVariable=widthVariable;
                 this.heightVariable=heightVariable;
+
+            //Depth variables
+                this.depthVariable=depthVariable;
 
             //Click delegates
                 this.leftClickDelegate = leftClickDelegate;

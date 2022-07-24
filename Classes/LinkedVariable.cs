@@ -257,6 +257,18 @@ namespace FCSG{
             }
         }
 
+        public static implicit operator float(LinkedVariable lv)
+        {
+            if (lv.objectValue.GetType() == typeof(float))
+            {
+                return (float)lv.objectValue;
+            }
+            else
+            {
+                throw new System.InvalidCastException("Cannot cast " + lv.objectValue.GetType() + " to float");
+            }
+        }
+
         public static implicit operator string(LinkedVariable sv){
             if(sv.objectValue.GetType()==typeof(string)){
                 return (string)sv.objectValue;

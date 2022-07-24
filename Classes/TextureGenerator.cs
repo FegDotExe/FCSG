@@ -47,6 +47,22 @@ namespace FCSG{
             this.spriteBatchParams=spriteBatchParams;
         }
 
+        /// <param name="sprites">A layer group containing the sprites which will be drawn on the texture</param>
+        /// <param name="x">The width of the result texture</param>
+        /// <param name="y">The height of the result texture</param>
+        /// <summary>
+        /// Construct a texture generator which will use the given SpriteBatch
+        /// </summary>
+        public TextureGenerator(GraphicsDevice graphicsDevice, List<SpriteBase> sprites, int x, int y, SpriteBatch spriteBatch, SpriteBatchParameters spriteBatchParams = null)
+        {
+            this.graphicsDevice = graphicsDevice;
+            this.sprites = sprites;
+            this.x = x;
+            this.y = y;
+            this.spriteBatch = spriteBatch;
+            this.spriteBatchParams = spriteBatchParams;
+        }
+
         /// <summary>
         /// Generate the texture related to the given generator. If spriteBatchParams are given, they will be added to the default ones.
         /// </summary>
@@ -70,6 +86,10 @@ namespace FCSG{
         }
         public void Remove(SpriteBase sprite){
             sprites.Remove(sprite);
+        }
+
+        public static implicit operator Texture2D(TextureGenerator textureGenerator) {
+            return textureGenerator.Generate();
         }
     }
 }
