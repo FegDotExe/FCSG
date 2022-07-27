@@ -3,28 +3,45 @@
 
 # Wrapper
 A big big class which wraps all the Sprite Objects, helping with general click/draw actions.
+
+**File**: [Wrapper.cs](Sprites/Wrapper.cs)
 ## Fields
-`private List<SpriteObject> sprites`: A list containing all the sprites contained in this wrapper.  `public SpriteBatch spriteBatch`: The spritebatch which will be used for all the drawing methods.
-
-`LayerGroup leftClick`: A LayerGroup containing Sprites which can be left-clicked.
-
-`LayerGroup middleClick`
-
-`LayerGroup rightClick`
-
-`LayerGroup wheelHover`: A LayerGroup containing Sprites which can be scrolled.
-
+### Private fields
+`List<SpriteObject> sprites`: A list containing all the sprites contained in this wrapper.  
+`SpriteBatch spriteBatch`: The spritebatch which will be used for all the drawing methods.
+### Public fields
+`LayerGroup leftClick`: A LayerGroup containing Sprites which can be left-clicked.  
+`LayerGroup middleClick`: A LayerGroup containing Sprites which can be middle-clicked.  
+`LayerGroup rightClick`: A LayerGroup containing Sprites which can be right-clicked.  
+`LayerGroup wheelHover`: A LayerGroup containing Sprites which can be scrolled.  
 `LayerGroup hover`: A LayerGroup containing Sprites which can be hovered.
+## Constructors
+### Wrapper(SpriteBatch, SpriteBatchParameters)
+
+| Type                    | Name                | Description                                                                                                                                          |
+| ----------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SpriteBatch`           | `spriteBatch`       | The [SpriteBatch](https://docs.monogame.net/api/Microsoft.Xna.Framework.Graphics.SpriteBatch.html) which will be used in draw methods                |
+| `SpriteBatchParameters` | `spriteBatchParams` | The parameters which will be used in the [SpriteBatch.Begin](https://docs.monogame.net/api/Microsoft.Xna.Framework.Graphics.SpriteBatch.html) method | 
+
 ## Methods
-`NewSprite(...)`: Creates a new sprite and returns it. This automatically sets the wrapper class as the sprite's wrapper.
+### Add(SpriteBase)
+Adds the given sprite to the wrapper (also adding it to click lists etc).
+*Declaration*:
+```cs
+public void Add(SpriteBase sprite)
+```
 
-`Add(SpriteBase sprite)`: Adds a new sprite to the wrapper (also adding it to click lists etc).
+| Type         | Name     | Description                                                      |
+| ------------ | -------- | ---------------------------------------------------------------- |
+| `SpriteBase` | `sprite` | The [SpriteBase](#SpriteBase) which will be added to the Wrapper | 
 
+### Remove(SpriteBase)
 `Remove(SpriteBase sprite)`: Removes a sprite from the wrapper (also removing it from click lists etc).
 
+
+### Draw()
 `Draw()`: Calls the `Draw` method for all the sprites contained in the wrapper.
 
+
+### Click(Clicks, x, y)
 `Click(Clicks click, int x, int y)`: Triggers a click of the specified type for all the Sprites in the wrapper.
-# Utilities
-# LayerGroup
-# ObjectGroup
