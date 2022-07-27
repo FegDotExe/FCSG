@@ -12,4 +12,10 @@ namespace FCSG{
     ///A delegate used for click events. It returns true if the click should go on and look for the other clicks.
     ///</summary>
     public delegate bool ClickDelegate(SpriteBase sprite, int x, int y);
+
+    /// <summary>
+    /// A delegate which rapresents a function run while a certain async task is run; the progress should go from 0 to 1.
+    /// </summary>
+    /// <param name="progress">The progress in the action, from 0 to 1.</param>
+    public delegate void PercentageFunction(double progress);
 }

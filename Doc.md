@@ -1,6 +1,11 @@
+# General map
+- [Wrapper](#Wrapper)
+
 # Wrapper
 A big big class which wraps all the Sprite Objects, helping with general click/draw actions.
 ## Fields
+`private List<SpriteObject> sprites`: A list containing all the sprites contained in this wrapper.  `public SpriteBatch spriteBatch`: The spritebatch which will be used for all the drawing methods.
+
 `LayerGroup leftClick`: A LayerGroup containing Sprites which can be left-clicked.
 
 `LayerGroup middleClick`
