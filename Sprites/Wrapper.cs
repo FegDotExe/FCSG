@@ -31,35 +31,6 @@ namespace FCSG{
             hover = new LayerGroup();
         }
 
-        #region NewSprite
-        public Sprite NewSprite(
-            Texture2D texture, 
-            float depth=0, 
-            ObjectGroup<SpriteObject> group=null,
-            List<ObjectGroup<SpriteObject>> groups=null,
-            LinkedVariableParams xVariable=null, 
-            int? x=null,
-            LinkedVariableParams yVariable=null,
-            int? y=null,
-            LinkedVariableParams widthVariable=null, 
-            int? width=null,
-            LinkedVariableParams heightVariable=null,
-            int? height=null,
-            float rotation=0, 
-            Vector2? origin=null, 
-            Color? color=null,
-            ClickDelegate leftClickDelegate=null,
-            ClickDelegate middleClickDelegate=null,
-            ClickDelegate rightClickDelegate=null,
-            ClickDelegate wheelHoverDelegate=null,
-            ClickDelegate hoverDelegate=null
-        ){
-            Sprite newSprite=new Sprite(new SpriteParameters(spriteBatch, texture:texture, wrapper:this, group:group, groups:groups, depth:depth, xVariable:xVariable, yVariable:yVariable, widthVariable:widthVariable, heightVariable:heightVariable, rotation:rotation, origin:origin, color:color, x:x, y:y, width:width, height:height, leftClickDelegate:leftClickDelegate, middleClickDelegate:middleClickDelegate, rightClickDelegate:rightClickDelegate, wheelHoverDelegate:wheelHoverDelegate, hoverDelegate:hoverDelegate));
-            sprites.Add(newSprite);
-            return newSprite;
-        }
-        #endregion NewSprite
-
         /// <summary>
         /// Completely handles sprite addition (Adds to draw and click groups).
         /// </summary>

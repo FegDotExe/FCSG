@@ -18,4 +18,6 @@ namespace FCSG{
     /// </summary>
     /// <param name="progress">The progress in the action, from 0 to 1.</param>
     public delegate void PercentageFunction(double progress);
+
+    public delegate object LoadDelegate(string name, Microsoft.Xna.Framework.Content.ContentManager content);
 }

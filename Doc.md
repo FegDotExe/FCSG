@@ -4,7 +4,7 @@
 # Wrapper
 A big big class which wraps all the Sprite Objects, helping with general click/draw actions.
 
-**File**: [Wrapper.cs](Sprites/Wrapper.cs)
+**File**: [Sprites/Wrapper.cs](Sprites/Wrapper.cs)
 ## Fields
 ### Private fields
 `List<SpriteObject> sprites`: A list containing all the sprites contained in this wrapper.  
@@ -14,7 +14,8 @@ A big big class which wraps all the Sprite Objects, helping with general click/d
 `LayerGroup middleClick`: A LayerGroup containing Sprites which can be middle-clicked.  
 `LayerGroup rightClick`: A LayerGroup containing Sprites which can be right-clicked.  
 `LayerGroup wheelHover`: A LayerGroup containing Sprites which can be scrolled.  
-`LayerGroup hover`: A LayerGroup containing Sprites which can be hovered.
+`LayerGroup hover`: A LayerGroup containing Sprites which can be hovered.  
+`SpriteBatchParameters spriteBatchParams`: The parameters used when calling [SpriteBatch.Begin](https://docs.monogame.net/api/Microsoft.Xna.Framework.Graphics.SpriteBatch.html) in the [Draw](#Draw).
 ## Constructors
 ### Wrapper(SpriteBatch, SpriteBatchParameters)
 
@@ -36,12 +37,30 @@ public void Add(SpriteBase sprite)
 | `SpriteBase` | `sprite` | The [SpriteBase](#SpriteBase) which will be added to the Wrapper | 
 
 ### Remove(SpriteBase)
-`Remove(SpriteBase sprite)`: Removes a sprite from the wrapper (also removing it from click lists etc).
+Removes the given sprite from the wrapper (also removing it from click lists etc).
+*Declaration*:
+```cs
+public void Remove(SpriteBase sprite)
+```
+
+| Type         | Name     | Description                                                          |
+| ------------ | -------- | -------------------------------------------------------------------- |
+| `SpriteBase` | `sprite` | The [SpriteBase](#SpriteBase) which will be removed from the Wrapper | 
 
 
 ### Draw()
-`Draw()`: Calls the `Draw` method for all the sprites contained in the wrapper.
+Calls the `Draw` method for all the sprites contained in the wrapper, using this wrapper's `spriteBatchParams`.
+*Declaration*:
+```cs
+public void Draw()
+```
 
 
 ### Click(Clicks, x, y)
 `Click(Clicks click, int x, int y)`: Triggers a click of the specified type for all the Sprites in the wrapper.
+
+# SpriteBase
+The base class for all the sprite classes.
+## Fields
+## Constructors
+## Methods

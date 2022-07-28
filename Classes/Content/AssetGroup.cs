@@ -14,7 +14,34 @@ namespace FCSG
 {
     public class AssetGroup
     {
+        /// <summary>
+        /// A class made to be able to convert string to <c>Type</c>s and to <c>ContentType</c>s.
+        /// </summary>
+        private class TypeConverter
+        {
+            public string typeString;
+            public LoadDelegate loadDelegate;
+            public ContentType contentType;
+
+            /// <summary>
+            /// Build a new <c>TypeConverter</c>
+            /// </summary>
+            /// <param name="typeString">The string by which the type will be characterized</param>
+            /// <param name="loadDelegate">A delegate which should be called when trying to load an object of the type of this <c>TypeConverter</c></param>
+            /// <param name="contentType">The content type which will represent this <c>TypeConverter</c></param>
+            public TypeConverter(string typeString, LoadDelegate loadDelegate, ContentType contentType)
+            {
+                this.typeString = typeString;
+                this.loadDelegate = loadDelegate;
+                this.contentType = contentType;
+            }
+        }
         private Dictionary<string, ContentType> assets;
+
+        private static TypeConverter[] typeConverterArray = { //TODO: add new types here.
+            new TypeConverter("Texture2D",(string name, ContentManager content)=>content.Load<Texture2D>(name),ContentType.Texture2D),
+            new TypeConverter("SpriteFont",(string name, ContentManager content)=>content.Load<SpriteFont>(name),ContentType.Texture2D)
+        };
 
         public int size
         {
@@ -46,14 +73,15 @@ namespace FCSG
         /// <exception cref="ArgumentException"></exception>
         public static ContentType stringToType(string typeString)
         {
-            if (typeString == "Texture2D")
+            foreach(TypeConverter typeConverter in typeConverterArray)
             {
-                return ContentType.Texture2D;
-            }//Add new types here
-            else
-            {
-                throw new Exception(typeString+" is not a valid content type.");
+                if(typeConverter.typeString == typeString)
+                {
+                    return typeConverter.contentType;
+                }
             }
+
+            throw new Exception(typeString+" is not a valid content type.");
         }
 
         /// <summary>
@@ -74,9 +102,12 @@ namespace FCSG
             string name = assets.ElementAt(index).Key;
             ContentType type=assets.ElementAt(index).Value;
 
-            if(type == ContentType.Texture2D)
+            foreach(TypeConverter converter in typeConverterArray)
             {
-                return new ContentElement(name,content.Load<Texture2D>(name));
+                if (converter.contentType == type)
+                {
+                    return new ContentElement(name, converter.loadDelegate(name,content));
+                }
             }
 
             throw new Exception("The type "+type+" is unhandled. In order to remove this error, add type handling in AssetGroup.LoadIndex.");
@@ -99,7 +130,8 @@ namespace FCSG
 
     public enum ContentType
     {
-        Texture2D
+        Texture2D,
+        SpriteFont
     }
 
     public class ContentElement
