@@ -21,7 +21,7 @@ namespace FCSG{
         /// <param name="totalSeconds">The time in seconds this event will last</param>
         /// <param name="normalFunction">The function to call when the event is not finished</param>
         /// <param name="finalFunction">The function to call when the event is finished</param>
-        /// <param name="deltaTime">The initial elapsed time. It is usualy determined using <c>GameClock.elapsed</c></param>
+        /// <param name="deltaTime">The initial elapsed time. It is usualy determined using <c>GameClock.Elapsed</c></param>
         /// <summary>
         /// Construct a new TimeEvent.
         /// </summary>

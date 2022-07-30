@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 namespace FCSG{
     public delegate void TypeAction<Type>(Type type);
 
@@ -20,4 +21,7 @@ namespace FCSG{
     public delegate void PercentageFunction(double progress);
 
     public delegate object LoadDelegate(string name, Microsoft.Xna.Framework.Content.ContentManager content);
+
+    public delegate bool InputDelegate(object lambdaArgument);
+    public delegate bool ControllerDelegate(PlayerIndex playerIndex);
 }

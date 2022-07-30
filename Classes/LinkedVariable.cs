@@ -118,10 +118,10 @@ namespace FCSG{
         ///<summary>
         ///Adds a variable which will be updated when this variable is updated
         ///</summary>
-        public void AddLinkedVariable(LinkedVariable sv){//Adds a variable (sv) which is sensitive to this
-            if(!linkedVariables.Contains(sv)){
+        public void AddLinkedVariable(LinkedVariable lv){//Adds a variable (lv) which is sensitive to this
+            if(!linkedVariables.Contains(lv)){
                 // Console.WriteLine("Adding "+this+" to "+sv);
-                linkedVariables.Add(sv);
+                linkedVariables.Add(lv);
             }
         }
         ///<summary>
@@ -200,6 +200,15 @@ namespace FCSG{
             }else if(parameters.linkedVariableDelegate!=null){
                 this.linkedVariablesDelegate=parameters.linkedVariableDelegate;
             }
+        }
+
+        /// <summary>
+        /// Constructs a linked variable which will only hold the static value of the given object, and will only be updated through <c>LinkedVariable.Set()</c>
+        /// </summary>
+        /// <param name="value">The value of this linked variable</param>
+        public LinkedVariable(object value)
+        {
+            this.objectDelegate = (SpriteBase sb) => value;
         }
         #endregion Constructors
 
