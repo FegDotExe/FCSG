@@ -206,14 +206,16 @@ namespace FCSG{
                 midHeight = -1;
 
             //Depth variable
-            if (spriteParameters.depthVariable != null)
+            if (spriteParameters.depth != null) {
+                this.depthVariable = new LinkedVariable(this, (SpriteBase sb) => (float)spriteParameters.depth);
+            }
+            else if(spriteParameters.depthVariable!=null)
             {
-                Debug.WriteLine("depthVariable is not null");
                 this.depthVariable = new LinkedVariable(this, spriteParameters.depthVariable);
             }
-            else //Fixed depth is only set if depthVariable is null.
+            else
             {
-                this.depth = spriteParameters.depth;
+                this.depthVariable = new LinkedVariable(this,(SpriteBase sb) => 0);
             }
 
 

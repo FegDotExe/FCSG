@@ -78,7 +78,7 @@ namespace FCSG{
             LinkedVariableParams originalWidthVariable=null, //Only for TextSprite
             LinkedVariableParams originalHeightVariable=null, //Only for TextSprite
             Wrapper wrapper=null,
-            float? depth=0, 
+            float? depth=null, 
             LinkedVariableParams depthVariable=null,
             LinkedVariableParams xVariable=null,
             int? x=null,
