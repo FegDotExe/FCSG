@@ -279,10 +279,13 @@ namespace FCSG{
         }
 
         public static implicit operator string(LinkedVariable sv){
-            if(sv.objectValue.GetType()==typeof(string)){
+            if (sv.objectValue.GetType() == typeof(string)) {
                 return (string)sv.objectValue;
-            }else{
-                throw new System.InvalidCastException("Cannot cast "+sv.objectValue.GetType()+" to string");
+            } else if (sv.objectValue.GetType()==typeof(string)) 
+            {
+                return ""+(int)sv.objectValue;
+            } else {
+                throw new System.InvalidCastException("Cannot cast " + sv.objectValue.GetType() + " to string");
             }
         }
 

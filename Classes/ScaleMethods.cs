@@ -30,6 +30,17 @@ namespace FCSG{
         }
 
         /// <summary>
+        /// Get the coordinate value which centers the given base value in the given max value.
+        /// </summary>
+        /// <param name="baseValue">The value of the object which is to be centered</param>
+        /// <param name="max">The length of the space in which the object needs to be centered</param>
+        /// <returns>The coordinate value of the centered object</returns>
+        public static int Center(int baseValue, int max)
+        {
+            return (max - baseValue)/2;
+        }
+
+        /// <summary>
         /// Returns the centered y position of a sprite contained in a rectangle of height=maxY. If used in a LinkedVariable, the LinkedVariable should be sensitive towards changes for the given maxY.
         /// </summary>
         public static int CenterY(SpriteBase spriteBase, int maxY){
