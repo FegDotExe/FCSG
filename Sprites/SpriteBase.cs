@@ -15,25 +15,25 @@ namespace FCSG{
         public string name="";
         //Position values
             public int x{
-                get{return xVariable;}
+                get{return xVariable.Get();}
                 set{xVariable.Set(value);}
             }
             public int y{
-                get{return yVariable;}
+                get{return yVariable.Get();}
                 set{yVariable.Set(value);}
             }
-            public LinkedVariable xVariable;
-            public LinkedVariable yVariable;
+            public LinkedVariable<int> xVariable;
+            public LinkedVariable<int> yVariable;
         //Size values
-            public LinkedVariable widthVariable;
-            public LinkedVariable heightVariable;
+            public LinkedVariable<int> widthVariable;
+            public LinkedVariable<int> heightVariable;
             public int width{
-                get{return widthVariable;}
+                get{return widthVariable.Get();}
                 set{widthVariable.Set(value);}
             }
             protected int midWidth{get;set;} //Used to know wether the middle texture should be redrawn or not
             public int height{
-                get{return heightVariable;}
+                get{return heightVariable.Get();}
                 set{heightVariable.Set(value);}
             }
             protected int midHeight{get;set;} //Used to know wether the middle texture should be redrawn or not
@@ -43,10 +43,10 @@ namespace FCSG{
         public float rotation{get;set;}
         public Vector2 origin{get;set;}
         public float? depth{
-            get { return depthVariable; }   
-            set { depthVariable.Set(value);}
+            get { return depthVariable.Get(); }   
+            set { depthVariable.Set((float)value);}
         }
-        public LinkedVariable depthVariable;
+        public LinkedVariable<float> depthVariable;
 
         public SpriteEffects effects=SpriteEffects.None;
         public bool draw{get;set;} //Wether the sprite will be drawn or not
@@ -168,54 +168,58 @@ namespace FCSG{
 
             //Position variables
                 if(spriteParameters.x!=null){
-                    this.xVariable = new LinkedVariable(this,(SpriteBase sb)=>spriteParameters.x);
+                    this.xVariable = new LinkedVariable<int>(this,(SpriteBase sb)=>(int)spriteParameters.x);
                 }
                 else if(spriteParameters.xVariable != null){
-                    this.xVariable = new LinkedVariable(this, spriteParameters.xVariable);
+                    this.xVariable = new LinkedVariable<int>(this, spriteParameters.xVariable);
                     // xVariable.SetSprite(this);
                 }
                 else
-                    this.xVariable = new LinkedVariable(this,(SpriteBase sb)=>0);
+                {
+                    this.xVariable = new LinkedVariable<int>(this, (SpriteBase sb) => 0);
+                }
                 if(spriteParameters.y!=null){
-                    this.yVariable = new LinkedVariable(this,(SpriteBase sb)=>spriteParameters.y);
+                    this.yVariable = new LinkedVariable<int>(this,(SpriteBase sb)=>(int)spriteParameters.y);
                 }
                 else if(spriteParameters.yVariable != null){
-                    this.yVariable = new LinkedVariable(this, spriteParameters.yVariable);
+                    this.yVariable = new LinkedVariable<int>(this, spriteParameters.yVariable);
                     // yVariable.SetSprite(this);
                 }
                 else
-                    this.yVariable = new LinkedVariable(this,(SpriteBase sb)=>0);
+                {
+                    this.yVariable = new LinkedVariable<int>(this, (SpriteBase sb) => 0);
+                }
 
             //Size delegates
                 if(spriteParameters.width!=null){
-                    this.widthVariable=new LinkedVariable(this,(SpriteBase sprite)=>(int)spriteParameters.width);
+                    this.widthVariable=new LinkedVariable<int>(this,(SpriteBase sprite)=>(int)spriteParameters.width);
                 }
                 else if(spriteParameters.widthVariable!=null)
-                    this.widthVariable = new LinkedVariable(this, spriteParameters.widthVariable);
+                    this.widthVariable = new LinkedVariable<int>(this, spriteParameters.widthVariable);
                 else
-                    this.widthVariable = new LinkedVariable(this,(SpriteBase sprite) => 100);
+                    this.widthVariable = new LinkedVariable<int>(this,(SpriteBase sprite) => 100);
                 midWidth = -1;
                 
                 if(spriteParameters.height!=null){
-                    this.heightVariable=new LinkedVariable(this,(SpriteBase sprite)=>(int)spriteParameters.height);
+                    this.heightVariable=new LinkedVariable<int>(this,(SpriteBase sprite)=>(int)spriteParameters.height);
                 }
                 else if(spriteParameters.heightVariable!=null)
-                    this.heightVariable = new LinkedVariable(this, spriteParameters.heightVariable);
+                    this.heightVariable = new LinkedVariable<int>(this, spriteParameters.heightVariable);
                 else
-                    this.heightVariable = new LinkedVariable(this,(SpriteBase sprite) => 100);
+                    this.heightVariable = new LinkedVariable<int>(this,(SpriteBase sprite) => 100);
                 midHeight = -1;
 
             //Depth variable
             if (spriteParameters.depth != null) {
-                this.depthVariable = new LinkedVariable(this, (SpriteBase sb) => (float)spriteParameters.depth);
+                this.depthVariable = new LinkedVariable<float>(this, (SpriteBase sb) => (float)spriteParameters.depth);
             }
             else if(spriteParameters.depthVariable!=null)
             {
-                this.depthVariable = new LinkedVariable(this, spriteParameters.depthVariable);
+                this.depthVariable = new LinkedVariable<float>(this, spriteParameters.depthVariable);
             }
             else
             {
-                this.depthVariable = new LinkedVariable(this,(SpriteBase sb) => 0);
+                this.depthVariable = new LinkedVariable<float>(this,(SpriteBase sb) => 0);
             }
 
 

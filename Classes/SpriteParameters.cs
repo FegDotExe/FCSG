@@ -13,18 +13,18 @@ namespace FCSG{
         public TextSprite.LayoutMode layoutMode;
         public int offsetX; //Only for TextSprite
         public int offsetY; //Only for TextSprite
-        public LinkedVariableParams originalWidthVariable; //Only for TextSprite
-        public LinkedVariableParams originalHeightVariable; //Only for TextSprite
+        public LinkedVariableParams<int> originalWidthVariable; //Only for TextSprite
+        public LinkedVariableParams<int> originalHeightVariable; //Only for TextSprite
         public Wrapper wrapper;
         public float? depth;
-        public LinkedVariableParams depthVariable;
-        public LinkedVariableParams xVariable;
+        public LinkedVariableParams<float> depthVariable;
+        public LinkedVariableParams<int> xVariable;
         public int? x;
-        public LinkedVariableParams yVariable;
+        public LinkedVariableParams<int> yVariable;
         public int? y;
-        public LinkedVariableParams widthVariable;
+        public LinkedVariableParams<int> widthVariable;
         public int? width;
-        public LinkedVariableParams heightVariable;
+        public LinkedVariableParams<int> heightVariable;
         public int? height;
         public float rotation; 
         public Vector2 origin; 
@@ -75,18 +75,18 @@ namespace FCSG{
             TextSprite.LayoutMode layoutMode=TextSprite.LayoutMode.Left, //Only for TextSprite
             int offsetX=0, //Only for TextSprite
             int offsetY=0, //Only for TextSprite
-            LinkedVariableParams originalWidthVariable=null, //Only for TextSprite
-            LinkedVariableParams originalHeightVariable=null, //Only for TextSprite
+            LinkedVariableParams<int> originalWidthVariable=null, //Only for TextSprite
+            LinkedVariableParams<int> originalHeightVariable=null, //Only for TextSprite
             Wrapper wrapper=null,
             float? depth=null, 
-            LinkedVariableParams depthVariable=null,
-            LinkedVariableParams xVariable=null,
+            LinkedVariableParams<float> depthVariable=null,
+            LinkedVariableParams<int> xVariable=null,
             int? x=null,
-            LinkedVariableParams yVariable=null,
+            LinkedVariableParams<int> yVariable=null,
             int? y=null,
-            LinkedVariableParams widthVariable=null, 
+            LinkedVariableParams<int> widthVariable=null, 
             int? width=null,
-            LinkedVariableParams heightVariable=null,
+            LinkedVariableParams<int> heightVariable=null,
             int? height=null,
             float rotation=0, 
             Vector2? origin=null, 
@@ -177,7 +177,7 @@ namespace FCSG{
             output.layoutMode=Utilities.Choose<TextSprite.LayoutMode>(sp1.layoutMode,sp2.layoutMode);
             output.offsetX=Utilities.Choose<int>(sp1.offsetX,sp2.offsetX);
             output.offsetY=Utilities.Choose<int>(sp1.offsetY,sp2.offsetY);
-            output.originalWidthVariable=Utilities.Choose<LinkedVariableParams>(sp1.originalWidthVariable,sp2.originalWidthVariable);
+            output.originalWidthVariable=Utilities.Choose(sp1.originalWidthVariable,sp2.originalWidthVariable);
             output.originalHeightVariable=Utilities.Choose(sp1.originalHeightVariable,sp2.originalHeightVariable);
             output.wrapper=Utilities.Choose(sp1.wrapper,sp2.wrapper);
             output.depth=Utilities.Choose(sp1.depth,sp2.depth);

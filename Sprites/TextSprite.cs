@@ -24,14 +24,14 @@ namespace FCSG{
             }
         }
         private string _text;
-        private LinkedVariable originalWidthVariable; //The size of the 2DRenderTarget used to first draw the text on; then the target is used to draw the text on the screen. This is done to save on performance.
+        private LinkedVariable<int> originalWidthVariable; //The size of the 2DRenderTarget used to first draw the text on; then the target is used to draw the text on the screen. This is done to save on performance.
         public int originalWidth{
-            get{return originalWidthVariable;}
+            get{return originalWidthVariable.Get();}
             set{originalWidthVariable.Set(value);}
         }
-        private LinkedVariable originalHeightVariable; //The size of the 2DRenderTarget used to first draw the text on; then the target is used to draw the text on the screen. This is done to save on performance.
+        private LinkedVariable<int> originalHeightVariable; //The size of the 2DRenderTarget used to first draw the text on; then the target is used to draw the text on the screen. This is done to save on performance.
         public int originalHeight{
-            get{return originalHeightVariable;}
+            get{return originalHeightVariable.Get();}
             set{originalHeightVariable.Set(value);}
         }
         public enum WrapMode {
@@ -85,13 +85,13 @@ namespace FCSG{
             }
             
             if(spriteParameters.originalHeightVariable!=null)
-                this.originalHeightVariable = new LinkedVariable(this,spriteParameters.originalHeightVariable);
+                this.originalHeightVariable = new LinkedVariable<int>(this,spriteParameters.originalHeightVariable);
             else
-                this.originalHeightVariable = new LinkedVariable(this, (SpriteBase sprite) => 1000);
+                this.originalHeightVariable = new LinkedVariable<int>(this, (SpriteBase sprite) => 1000);
             if(spriteParameters.originalWidthVariable!=null)
-                this.originalWidthVariable = new LinkedVariable(this,spriteParameters.originalWidthVariable);
+                this.originalWidthVariable = new LinkedVariable<int>(this,spriteParameters.originalWidthVariable);
             else
-                this.originalWidthVariable = new LinkedVariable(this, (SpriteBase sprite) => 1000);
+                this.originalWidthVariable = new LinkedVariable<int>(this, (SpriteBase sprite) => 1000);
 
             if(spriteParameters.textBatchParameters!=null)
                 this.textBatchParameters = spriteParameters.textBatchParameters;
@@ -111,7 +111,7 @@ namespace FCSG{
         /// </summary>
         private void ElaborateTexture(bool reloadDimension=true,bool reloadLines=true){
             if(reloadDimension){
-                renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice, originalWidthVariable, originalHeightVariable);
+                renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice, originalWidthVariable.Get(), originalHeightVariable.Get());
             }
 
             if(reloadLines){
@@ -132,10 +132,10 @@ namespace FCSG{
                         x=0;
                         break;
                     case LayoutMode.Center:
-                        x=(int)((originalWidthVariable-font.MeasureString(lineText).X)/2);
+                        x=(int)((originalWidthVariable.Get()-font.MeasureString(lineText).X)/2);
                         break;
                     case LayoutMode.Right:
-                        x=(int)(originalWidthVariable-font.MeasureString(lineText).X);
+                        x=(int)(originalWidthVariable.Get()-font.MeasureString(lineText).X);
                         break;
                 }
                 spriteBatch.DrawString(font,lineText,new Vector2(x+offsetX,(line*height)+offsetY),Color.White);
