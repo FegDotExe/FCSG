@@ -22,6 +22,9 @@ namespace FCSG{
         /// <param name="normalFunction">The function to call when the event is not finished</param>
         /// <param name="finalFunction">The function to call when the event is finished</param>
         /// <param name="deltaTime">The initial elapsed time. It is usualy determined using <c>GameClock.Elapsed</c></param>
+        /// <param name="name">The name to be assigned to this time event inside of a timeEvents dictionary</param>
+        /// <param name="timeEvents">A dictionary in which to insert this time event. It is required if the time event should not be replaced</param>
+        /// <param name="replace">If the event should be replaced inside of a timeEvents dictionary</param>
         /// <summary>
         /// Construct a new TimeEvent.
         /// </summary>
@@ -59,6 +62,22 @@ namespace FCSG{
                 isFinished=true;
             }else{
                 normalFunction(((double)timeElapsed)/(double)totalTime);
+            }
+        }
+
+        /// <summary>
+        /// Correctly run all the time events in this dictionary
+        /// </summary>
+        /// <param name="timeEvents">The dictionary of time events</param>
+        public static void RunAll(Dictionary<string,TimeEvent> timeEvents)
+        {
+            foreach(KeyValuePair<string,TimeEvent> kvp in timeEvents)
+            {
+                kvp.Value.RunFunction();
+                if (kvp.Value.isFinished)
+                {
+                    timeEvents.Remove(kvp.Key);
+                }
             }
         }
     }

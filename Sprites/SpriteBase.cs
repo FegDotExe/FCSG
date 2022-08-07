@@ -13,35 +13,40 @@ namespace FCSG{
         #region Fields
         protected SpriteBatch spriteBatch;
         public string name="";
+        
         //Position values
-            public int x{
-                get{return xVariable.Get();}
-                set{xVariable.Set(value);}
-            }
-            public int y{
-                get{return yVariable.Get();}
-                set{yVariable.Set(value);}
-            }
-            public LinkedVariable<int> xVariable;
-            public LinkedVariable<int> yVariable;
+        public int x{
+            get{return xVariable.Get();}
+            set{xVariable.Set(value);}
+        }
+        public int y{
+            get{return yVariable.Get();}
+            set{yVariable.Set(value);}
+        }
+        public LinkedVariable<int> xVariable;
+        public LinkedVariable<int> yVariable;
+
         //Size values
-            public LinkedVariable<int> widthVariable;
-            public LinkedVariable<int> heightVariable;
-            public int width{
-                get{return widthVariable.Get();}
-                set{widthVariable.Set(value);}
-            }
-            protected int midWidth{get;set;} //Used to know wether the middle texture should be redrawn or not
-            public int height{
-                get{return heightVariable.Get();}
-                set{heightVariable.Set(value);}
-            }
-            protected int midHeight{get;set;} //Used to know wether the middle texture should be redrawn or not
+        public LinkedVariable<int> widthVariable;
+        public LinkedVariable<int> heightVariable;
+        public int width{
+            get{return widthVariable.Get();}
+            set{widthVariable.Set(value);}
+        }
+        protected int midWidth{get;set;} //Used to know wether the middle texture should be redrawn or not
+        public int height{
+            get{return heightVariable.Get();}
+            set{heightVariable.Set(value);}
+        }
+        protected int midHeight{get;set;} //Used to know wether the middle texture should be redrawn or not
+
         public Texture2D texture{get;set;}
         protected Texture2D middleTexture;
+
         public Color color; //Used when the sprite is drawn
         public float rotation{get;set;}
         public Vector2 origin{get;set;}
+
         public float? depth{
             get { return depthVariable.Get(); }   
             set { depthVariable.Set((float)value);}
@@ -49,8 +54,11 @@ namespace FCSG{
         public LinkedVariable<float> depthVariable;
 
         public SpriteEffects effects=SpriteEffects.None;
+
         public bool draw{get;set;} //Wether the sprite will be drawn or not
+
         public Wrapper wrapper; //The wrapper which contains the sprite
+
         protected List<ObjectGroup<SpriteObject>> groups{get;set;}
         //Click delegates
             #region ClickDelegates
@@ -125,10 +133,16 @@ namespace FCSG{
                 }
             }
             #endregion ClickDelegates
-        protected bool precise;
-        public Dictionary<string,object> variables{get; protected set;}
+        
+        protected bool precise; //Whether precise clicking is on or off
 
-        protected CollisionRectangle collisionRectangle; //A rectangle used for collision detection. its coordinates are relative to the sprite's position, and so is the size.
+        public Dictionary<string,object> variables{get; set;}
+
+        /// <summary>
+        /// A rectangle used for collision detection. its coordinates are relative to the sprite's position, and so is the size.
+        /// </summary>
+        protected CollisionRectangle collisionRectangle;
+
         #endregion Fields
         #region Constructors
         public SpriteBase(
@@ -143,6 +157,15 @@ namespace FCSG{
             //Add to wrapper
             if(this.wrapper!=null){
                 this.wrapper.Add(this);
+            }
+
+            if (spriteParameters.variables != null)
+            {
+                this.variables = spriteParameters.variables;
+            }
+            else
+            {
+                this.variables = new Dictionary<string, object>();
             }
 
             //Adding to groups
@@ -256,14 +279,9 @@ namespace FCSG{
             this.yVariable.Activate();
             this.widthVariable.Activate();
             this.heightVariable.Activate();
+            this.depthVariable.Activate();
             if(this.collisionRectangle!=null && this.collisionRectangle.sprite==null){
                 this.collisionRectangle.Activate(this);
-            }
-
-            if(spriteParameters.variables!=null){
-                this.variables=spriteParameters.variables;
-            }else{
-                this.variables=new Dictionary<string,object>();
             }
 
             this.draw=true;
@@ -300,10 +318,25 @@ namespace FCSG{
             }
         }
     
+        /// <summary>
+        /// Completely handles removal of sprite from the wrapper it is linked to, by using <c>Wrapper.Remove(SpriteBase)</c>
+        /// </summary>
         public void Remove(){
             if(wrapper!=null){
                 wrapper.Remove(this);
             }
+        }
+
+        /// <summary>
+        /// Unlink all the links to and from all the <c>LinkedVariable</c>s in this sprite. This calls <c>LinkedVariable.Unlink()</c> for each linked variable.
+        /// </summary>
+        public virtual void Unlink()
+        {
+            xVariable.Unlink();
+            yVariable.Unlink();
+            widthVariable.Unlink();
+            heightVariable.Unlink();
+            depthVariable.Unlink();
         }
 
         //TODO: make a method which takes a rectangle class to check collisions, so that it is more linear and compatible with actual game objects

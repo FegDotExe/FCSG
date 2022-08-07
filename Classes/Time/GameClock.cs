@@ -27,7 +27,7 @@ namespace FCSG{
         }
 
         /// <summary>
-        /// Set the time of the clock to the current time.
+        /// Set the time of the clock to the current time. Should be placed at the beginning of <c>Game.Draw()</c>
         /// </summary>
         public void Update(){
             long currentTime=DateTimeOffset.Now.ToUnixTimeMilliseconds();

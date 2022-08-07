@@ -232,6 +232,13 @@ namespace FCSG{
             return new string[] {left,""};
         }
 
+        public override void Unlink()
+        {
+            base.Unlink();
+            originalHeightVariable.Unlink();
+            originalWidthVariable.Unlink();
+        }
+
         public override void Draw(bool drawMiddle=true){
             BasicDraw(this.spriteBatch,drawMiddle);
         }

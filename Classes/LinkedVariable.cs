@@ -20,12 +20,12 @@ namespace FCSG{
             throw new NotImplementedException();
         }
 
-        public virtual void LinkTo(LinkedVariable lv)
+        internal virtual void LinkTo(LinkedVariable lv)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void AddLinkedVariable(LinkedVariable lv)
+        internal virtual void AddLinkedVariable(LinkedVariable lv)
         {
             throw new NotImplementedException();
         }
@@ -34,15 +34,26 @@ namespace FCSG{
         {
             throw new NotImplementedException();
         }
+
+        internal virtual void UnlinkFrom(LinkedVariable lv)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal virtual void UnlinkTo(LinkedVariable lv)
+        {
+            throw new NotImplementedException();
+        }
     }
     
     public class LinkedVariable<OutType>:LinkedVariable where OutType:struct{
-        protected bool round=true; //Wether int values should be rounded or not
         protected ObjectSpriteBaseDelegate<OutType> objectDelegate;
         protected SpriteBase spriteBase;
         protected List<LinkedVariable> linkedVariables=new List<LinkedVariable>(); //List of variables which will be updated when this variable is updated
         protected LinkedVarListSpriteBaseDelegate linkedVariablesDelegate=(SpriteBase sb)=>new LinkedVariable[] {}; //This is used to retrieve self-referencial values
+        protected List<LinkedVariable> linkedFromVariables = new List<LinkedVariable>();
 
+        protected OutType? lastValue = null; //The last valid value this linked variable had. Is used to avoid re-calculating Changed() and to avoid calling objectDelegate more than needed
         protected OutType? _value=null;
         protected OutType objectValue{
             get{
@@ -70,22 +81,32 @@ namespace FCSG{
         /// <summary>
         /// Set the value of the variable to the given value; if the value is different from the previous one, an update will be triggered.
         /// </summary>
+        /// <param name="value">The value to be set</param>
         public void Set(OutType value){
-            this.objectDelegate=(SpriteBase sb)=>value;
+            objectDelegate=(SpriteBase sb)=>value;
             if(Changed()){
                 SetUpdating();
                 Update();
             }
+            else
+            {
+                updating = false;
+            }
         }
 
+        /// <summary>
+        /// Get the current value of this linked variable
+        /// </summary>
+        /// <returns>The current value of this linked variable</returns>
         public new OutType Get()
         {
             return objectValue;
         }
 
-        public void Round(bool round){
-            this.round=round;
-        }
+        /// <summary>
+        /// Set the sprite for this linkedVariable
+        /// </summary>
+        /// <param name="sprite">A sprite to be passed to the lambdas</param>
         public void SetSprite(SpriteBase sprite){
             this.spriteBase=sprite;
         }
@@ -105,27 +126,22 @@ namespace FCSG{
         }
 
         /// <summary>
-        /// Updates the value of _value and if it has changed, updates all variables linked to this one.
+        /// Updates the value of _value and if it has changed, updates all variables linked to this one. IMPORTANT: this functions assumes <c>Changed()</c> is true.
         /// </summary>
         internal override void Update(){
-            if(Changed()){ //Is true if the value should be considered as changed
-                // if(objectDelegate(spriteBase).GetType()!=typeof(string)){
-                //     Console.WriteLine("SVariable updated: "+this.ToString());
-                //     Console.WriteLine(_value+" changed to "+ objectDelegate(this.spriteBase));
-                // }
-
-                //Debug.WriteLine("Updating");
-
-                _value=objectDelegate(spriteBase);
-                updating=false;
+            if (Changed())
+            {
+                _value = lastValue; //lastValue is the value calculated in Changed.
+                updating = false;
+                lastValue=null;
                 // Console.WriteLine("SVariable updated: "+this.ToString());
-                foreach(LinkedVariable sv in linkedVariables){
-                    if(sv.updating){
-                        sv.Update();
+                foreach (LinkedVariable lv in linkedVariables)
+                {
+                    if (lv.updating)
+                    {
+                        lv.Update();
                     }
                 }
-            }else{
-                updating=false;
             }
         }
 
@@ -133,50 +149,112 @@ namespace FCSG{
         /// Returns true if the value of the variable has changed since the last update.
         /// </summary>
         private bool Changed(){
-            bool changed=false;
             if(_value==null){
-                changed=true;
+                return true;
+            }else if (lastValue != null) //If lastValue is not null, it means that Changed has been called, but Update has not yet been called.
+            {
+                return true;
             }
             else
             {
                 var specificEquals = typeof(OutType).GetMethod("Equals", new Type[] {typeof(OutType)});
                 if (specificEquals != null && specificEquals.ReturnType==typeof(bool)) {
-                    changed= !(bool)specificEquals.Invoke(_value, new object[] { objectDelegate(this.spriteBase) });
+                    OutType currentValue = objectDelegate(spriteBase);
+                    bool changed = !(bool)specificEquals.Invoke(_value, new object[] { currentValue });
+                    if (changed)
+                    {
+                        lastValue = currentValue;
+                    }
+
+                    return changed;
                 }
                 // changed = _value.Equals(objectDelegate(this.spriteBase));
             }
 
             //Debug.WriteLine("Compared " + _value + " with " + objectDelegate(spriteBase)+" with result: "+changed);
 
-            return changed;
-        }
-
-        /// <summary>
-        /// If the value is updating, updates _value and deactivates updating
-        /// </summary>
-        private void FixValue(){
-            if(updating){
-                _value=objectDelegate(spriteBase);
-                updating=false;
-            }
+            return false;
         }
 
         ///<summary>
-        ///Adds a variable which will be updated when this variable is updated
+        ///Adds a variable which will be updated when this variable is updated. This only links one way, which means that the link will not be automatically removed in case lv gets unlinked.
         ///</summary>
-        public override void AddLinkedVariable(LinkedVariable lv){//Adds a variable (lv) which is sensitive to this
+        internal override void AddLinkedVariable(LinkedVariable lv){//Adds a variable (lv) which is sensitive to this
             if(!linkedVariables.Contains(lv)){
                 // Console.WriteLine("Adding "+this+" to "+sv);
                 linkedVariables.Add(lv);
             }
         }
         ///<summary>
-        ///Adds this variable to sv's linked variables, so that this is updated when sv is updated
+        ///Adds this variable to lv's linked variables, so that this is updated when lv is updated. This links both ways, which means that the link will be automatically removed in case lv gets unlinked.
         ///</summary>
-        public override void LinkTo(LinkedVariable lv){//Makes this variable sensitive to sv
+        internal override void LinkTo(LinkedVariable lv){//Makes this variable sensitive to sv
             // Console.WriteLine("Adding "+this+" to "+sv);
             lv.AddLinkedVariable(this);
+            if (!linkedFromVariables.Contains(lv))
+            {
+                linkedFromVariables.Add(lv);
+            }
         }
+
+        /// <summary>
+        /// Unlinks all the variables which depend from this one, also removing the links in those variables which tell that they are linked from this one.
+        /// </summary>
+        public void UnlinkTo()
+        {
+            foreach(LinkedVariable lv in linkedVariables)
+            {
+                lv.UnlinkFrom(this);
+            }
+            linkedVariables = new List<LinkedVariable>();
+        }
+
+        /// <summary>
+        /// If the current linked variables is linked to lv, this function removes that link.
+        /// </summary>
+        /// <param name="lv">The linked variable which "to link" is to be removed</param>
+        internal override void UnlinkTo(LinkedVariable lv)
+        {
+            if (linkedVariables.Contains(lv))
+            {
+                linkedVariables.Remove(lv);
+            }
+        }
+
+        /// <summary>
+        /// Unlinks all the variables on which this one depends, also removing the links in those variables which tell that they are linked to this one.
+        /// </summary>
+        public void UnlinkFrom()
+        {
+            foreach(LinkedVariable lv in linkedFromVariables)
+            {
+                lv.UnlinkTo(lv);
+            }
+            linkedVariables=new List<LinkedVariable>();
+        }
+
+        /// <summary>
+        /// If the current linked variables is linked from lv, this function removes that link.
+        /// </summary>
+        /// <param name="lv">The linked variable which "from link" is to be removed</param>
+        internal override void UnlinkFrom(LinkedVariable lv)
+        {
+            if (linkedFromVariables.Contains(lv))
+            {
+                linkedFromVariables.Remove(lv);
+            }
+        }
+
+        /// <summary>
+        /// Unlinks all links from and to this variable. This function calls <c>UnlinkTo()</c> and <c>UnlinkFrom()</c>.
+        /// </summary>
+        public void Unlink()
+        {
+            UnlinkTo();
+            UnlinkFrom();
+        }
+
+
         #endregion Methods
 
         #region Constructors
@@ -272,9 +350,9 @@ namespace FCSG{
         ///Links this to the LinkedVariables it should be linked to. Is used to link everything once it is sure that values are not null. It uses the linkedVariablesDelegate to get the linked. This overload of activate also links a new SpriteBase.
         ///</summary>
         public void Activate(SpriteBase sb){
-            this.spriteBase=sb;
-            foreach(LinkedVariable sv in linkedVariablesDelegate(spriteBase)){
-                LinkTo(sv);
+            spriteBase=sb;
+            foreach(LinkedVariable lv in linkedVariablesDelegate(spriteBase)){
+                LinkTo(lv);
             }
         }
 
