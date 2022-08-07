@@ -31,7 +31,7 @@ public void Add(SpriteBase sprite)
 
 | Type         | Name     | Description                                                      |
 | ------------ | -------- | ---------------------------------------------------------------- |
-| `SpriteBase` | `sprite` | The [SpriteBase](Documentation/SpriteBase.md) which will be added to the Wrapper | 
+| `SpriteBase` | `sprite` | The [SpriteBase](FCSG/Documentation/SpriteBase.md) which will be added to the Wrapper | 
 
 ### Remove(SpriteBase)
 Removes the given sprite from the wrapper (also removing it from click lists etc).
@@ -42,7 +42,7 @@ public void Remove(SpriteBase sprite)
 
 | Type         | Name     | Description                                                          |
 | ------------ | -------- | -------------------------------------------------------------------- |
-| `SpriteBase` | `sprite` | The [SpriteBase](Documentation/SpriteBase.md) which will be removed from the Wrapper | 
+| `SpriteBase` | `sprite` | The [SpriteBase](FCSG/Documentation/SpriteBase.md) which will be removed from the Wrapper | 
 
 
 ### Draw()
