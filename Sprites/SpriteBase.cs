@@ -61,78 +61,87 @@ namespace FCSG{
 
         protected List<ObjectGroup<SpriteObject>> groups{get;set;}
         //Click delegates
-            #region ClickDelegates
-            protected ClickDelegate _leftClickDelegate;
-            public ClickDelegate leftClickDelegate{
-                get{
-                    return _leftClickDelegate;
-                }
-                set{
-                    _leftClickDelegate = value;
-                    if(value!=null){
-                        wrapper.leftClick.Add(this);
-                    }else{
-                        wrapper.leftClick.Remove(this);
-                    }
+        #region ClickDelegates
+        protected ClickDelegate _leftClickDelegate;
+        public ClickDelegate leftClickDelegate{
+            get{
+                return _leftClickDelegate;
+            }
+            set{
+                _leftClickDelegate = value;
+                if(value!=null){
+                    wrapper.leftClick.Add(this);
+                    UpdateCollisionRectangle();
+                }else{
+                    wrapper.leftClick.Remove(this);
                 }
             }
-            protected ClickDelegate _middleClickDelegate;
-            public ClickDelegate middleClickDelegate{
-                get{
-                    return _middleClickDelegate;
+        }
+        protected ClickDelegate _middleClickDelegate;
+        public ClickDelegate middleClickDelegate{
+            get{
+                return _middleClickDelegate;
+            }
+            set{
+                _middleClickDelegate = value;
+                if(value!=null){
+                    wrapper.middleClick.Add(this);
+                    UpdateCollisionRectangle();
                 }
-                set{
-                    _middleClickDelegate = value;
-                    if(value!=null){
-                        wrapper.middleClick.Add(this);
-                    }else{
-                        wrapper.middleClick.Remove(this);
-                    }
+            else{
+                    wrapper.middleClick.Remove(this);
                 }
             }
-            protected ClickDelegate _rightClickDelegate;
-            public ClickDelegate rightClickDelegate{
-                get{
-                    return _rightClickDelegate;
+        }
+        protected ClickDelegate _rightClickDelegate;
+        public ClickDelegate rightClickDelegate{
+            get{
+                return _rightClickDelegate;
+            }
+            set{
+                _rightClickDelegate = value;
+                if(value!=null){
+                    wrapper.rightClick.Add(this);
+                    UpdateCollisionRectangle();
                 }
-                set{
-                    _rightClickDelegate = value;
-                    if(value!=null){
-                        wrapper.rightClick.Add(this);
-                    }else{
-                        wrapper.rightClick.Remove(this);
-                    }
+                else{
+                    wrapper.rightClick.Remove(this);
                 }
             }
-            protected ClickDelegate _wheelHoverDelegate;
-            public ClickDelegate wheelHoverDelegate{
-                get{
-                    return _wheelHoverDelegate;
+        }
+        protected ClickDelegate _wheelHoverDelegate;
+        public ClickDelegate wheelHoverDelegate{
+            get{
+                return _wheelHoverDelegate;
+            }
+            set{
+                _wheelHoverDelegate = value;
+                if(value!=null){
+                    wrapper.wheelHover.Add(this);
+                    UpdateCollisionRectangle();
                 }
-                set{
-                    _wheelHoverDelegate = value;
-                    if(value!=null){
-                        wrapper.wheelHover.Add(this);
-                    }else{
-                        wrapper.wheelHover.Remove(this);
-                    }
+                else{
+                    wrapper.wheelHover.Remove(this);
                 }
             }
-            protected ClickDelegate _hoverDelegate;
-            public ClickDelegate hoverDelegate{
-                get{
-                    return _hoverDelegate;
+        }
+        protected ClickDelegate _hoverDelegate;
+        public ClickDelegate hoverDelegate{
+            get{
+                return _hoverDelegate;
+            }
+            set{
+                _hoverDelegate = value;
+                if(value!=null){
+                    wrapper.hover.Add(this);
+                    UpdateCollisionRectangle();
                 }
-                set{
-                    _hoverDelegate = value;
-                    if(value!=null){
-                        wrapper.hover.Add(this);
-                    }else{
-                        wrapper.hover.Remove(this);
-                    }
+                else{
+                    wrapper.hover.Remove(this);
                 }
             }
-            #endregion ClickDelegates
+        }
+        #endregion ClickDelegates
         
         protected bool precise; //Whether precise clicking is on or off
 
@@ -261,18 +270,11 @@ namespace FCSG{
                 
                 this.precise=spriteParameters.precise;
 
-                bool enableCollisionRectangle=true; //Controls wether the collision rectangle is enabled or not
-                if(this.leftClickDelegate==null && this.middleClickDelegate==null && this.rightClickDelegate==null && this.wheelHoverDelegate==null && this.hoverDelegate==null){
-                    enableCollisionRectangle=false;
-                }
+                UpdateCollisionRectangle();
 
             //Collision rectangle
-            if(spriteParameters.collisionRectangle!=null || enableCollisionRectangle){
-                if(spriteParameters.collisionRectangle!=null){
-                    this.collisionRectangle=spriteParameters.collisionRectangle; //Use the collision rectangle provided by the parameters
-                }else{
-                    this.collisionRectangle=new CollisionRectangle(this); //Create a new collision rectangle, just in case there are click delegates but the collision rectangle was not defined in the parameters
-                }
+            if(collisionRectangle!=null && spriteParameters.collisionRectangle!=null){
+                collisionRectangle=spriteParameters.collisionRectangle; //Use the collision rectangle provided by the parameters
             }
 
             this.xVariable.Activate();
@@ -390,6 +392,18 @@ namespace FCSG{
             RenderTarget2D renderTarget=new RenderTarget2D(spriteBatch.GraphicsDevice,spriteBatch.GraphicsDevice.Viewport.Width,spriteBatch.GraphicsDevice.Viewport.Width);
             Utilities.DrawOntoTarget(renderTarget,this,spriteBatch);
             return renderTarget;
+        }
+    
+        private void UpdateCollisionRectangle()
+        {
+            if (this.leftClickDelegate == null && this.middleClickDelegate == null && this.rightClickDelegate == null && this.wheelHoverDelegate == null && this.hoverDelegate == null)
+            {
+                return;
+            }
+            else if(collisionRectangle==null)
+            {
+                collisionRectangle = new CollisionRectangle(this);
+            }
         }
     }
 }

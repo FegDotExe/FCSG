@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
-
+using System.Diagnostics;
 
 namespace FCSG{
     /// <summary>
@@ -66,7 +66,6 @@ namespace FCSG{
             }
         }
         public SpriteBatchParameters textBatchParameters;
-        private List<string> lines;
         private RenderTarget2D renderTarget;
         
         /// <summary>
@@ -78,6 +77,7 @@ namespace FCSG{
             spriteParameters: spriteParameters
         ){
             this.font = spriteParameters.font;
+            
             this._text = spriteParameters.text;// Private reference is used so that the texture isn't elaborated before it can be
             
             if(this.font==null || this._text==null){
@@ -109,10 +109,14 @@ namespace FCSG{
         /// <summary>
         /// Updates the texture of the TextSprite.
         /// </summary>
+        /// <param name="reloadDimension">Whether the original dimension should be reloaded or not. Should only be called once the original dimensions are modified.</param>
+        /// <param name="reloadLines">Whether the line division should be reloaded or not. Should only be called once the text or the original dimensions are modified.</param>
         private void ElaborateTexture(bool reloadDimension=true,bool reloadLines=true){
             if(reloadDimension){
                 renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice, originalWidthVariable.Get(), originalHeightVariable.Get());
             }
+
+            List<string> lines = new List<string>();
 
             if(reloadLines){
                 lines=toLines(text,wrapMode:this.wrapMode);
@@ -149,7 +153,7 @@ namespace FCSG{
         }
 
         /// <summary>
-        /// Splits a string into lines, coherently with the settings of the TextSprite
+        /// Splits a string into lines, coherently with the given <c>WrapMode</c>.
         /// </summary>
         private List<string> toLines(string text,WrapMode wrapMode=WrapMode.Character){
             List<string> lines = new List<string>();
@@ -171,67 +175,61 @@ namespace FCSG{
                         }
                     }
                 }
-            }else{
+            }
+            else
+            { //If wrapmode is by word
                 string[] words=text.Split(' ');
-                string tempLine = "";
-                for(int i=0; i<words.Length; i++){
-                    if(font.MeasureString(tempLine+words[i]).X<originalWidth && i!=words.Length-1){
-                        tempLine+=words[i]+" ";
-                    }else{
-                        if(i==words.Length-1){
-                            string[] dividedLine=makeLine(tempLine,words[i],wrapMode:WrapMode.Character);
-                            // Console.WriteLine("TempLine: "+tempLine);
-                            // Console.WriteLine("Left: "+dividedLine[0]);
-                            // Console.WriteLine("Right: "+dividedLine[1]);
 
-                            tempLine=dividedLine[0];
+                string tempLine = ""; //Create a temporary line
 
-                            lines.Add(tempLine);
-                            tempLine="";
-
-                            List<string> additional=toLines(dividedLine[1]);
-                            foreach(string line in additional){
-                                lines.Add(line);
+                foreach (string word in words) {
+                    if (font.MeasureString(word).X < originalWidth) //If the word fits in a line by itself, it will either be added to the current line or to the next one
+                    {
+                        if (tempLine.Length > 0) //Tests if the line already has characters in it, so that it can add a space before
+                        {
+                            if(font.MeasureString(tempLine+" " + word).X < originalWidth) //If the word fits in the line
+                            {
+                                tempLine = tempLine + " " + word;
+                            }
+                            else
+                            {
+                                lines.Add(tempLine); //Add this line to the completed lines
+                                tempLine = word; //Create a new line which only contains this word
                             }
                         }
-                        else{
-                            if(tempLine.Length>0 && tempLine[tempLine.Length-1]==' '){ //Deletes space at the end of the line
-                                tempLine=tempLine.Substring(0,tempLine.Length-1);
-                            }
-                            lines.Add(tempLine);
+                        else
+                        {
+                            tempLine += word;
+                        }
+                    }
+                    else //If the word is larger than a line
+                    {
+                        if(tempLine.Length > 0) //If the line already contains some characters, a space should be added
+                        {
+                            tempLine += " ";
+                        }
 
-                            tempLine="";
-                            if(words[i]!=""){
-                                tempLine+=words[i]+" ";
+                        foreach(char character in word)
+                        {
+                            if(font.MeasureString(tempLine+character).X < originalWidth)
+                            {
+                                tempLine+=character;
+                            }
+                            else
+                            {
+                                lines.Add(tempLine);
+                                tempLine = character+"";
                             }
                         }
                     }
                 }
+
+                lines.Add(tempLine); //Add eventual leftovers
             }
+
             return lines;
         }
         
-        /// <summary>
-        /// Adds the needed part of right to left and returns the new left with what remains of right. This method is made to fix the edge case in which the last line of a string exceeds the width of the texture on which it should be drawn.
-        /// </summary>
-        private string[] makeLine(string left, string right, WrapMode wrapMode=WrapMode.Character){
-            // Console.WriteLine("Initial left: "+left);
-            for(int i=0; i<right.Length;i++){
-                if(font.MeasureString(left+right[i]).X<originalWidth){
-                    left+=right[i];
-                }else{
-                    if(i==right.Length-1){
-                        left+=right[i];
-                    }
-
-                    // Console.WriteLine("Final left: "+left);
-                    return new string[]{left,right.Substring(i)};
-                }
-            }
-            
-            return new string[] {left,""};
-        }
-
         public override void Unlink()
         {
             base.Unlink();
@@ -245,7 +243,6 @@ namespace FCSG{
         public override void BasicDraw(SpriteBatch spriteBatch, bool drawMiddle = true)
         {
             if(draw){
-                //Console.WriteLine("Outside of a sprite resize: w="+midWidth+"/"+width+" h="+midHeight+"/"+height);
                 if(drawMiddle==true){
                     DrawMiddleTexture();
                 }

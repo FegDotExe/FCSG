@@ -371,5 +371,12 @@ namespace FCSG{
             this.sensitiveVariables=sensitiveVariables;
             this.linkedVariableDelegate=sensitiveDelegate;
         }
+
+        public LinkedVariableParams(OutType value)
+        {
+            objectDelegate=(SpriteBase sb) => value;
+            sensitiveVariables = null;
+            linkedVariableDelegate=null;
+        }
     }
 }

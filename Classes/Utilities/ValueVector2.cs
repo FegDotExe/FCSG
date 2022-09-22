@@ -9,7 +9,7 @@ namespace FCSG
     /// </summary>
     /// <typeparam name="T1">The type of the first value</typeparam>
     /// <typeparam name="T2">The type of the second value</typeparam>
-    public class ValueVector2<T1, T2>
+    public struct ValueVector2<T1, T2>: IEquatable<ValueVector2<T1, T2>>
     {
         public T1 X;
         public T2 Y;
@@ -20,21 +20,46 @@ namespace FCSG
             Y = yValue;
         }
 
-        public ValueVector2(){}
+        /// <summary>
+        /// Determines whether the current object is equal to the given object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() == typeof(ValueVector2<T1, T2>))
+            {
+                ValueVector2<T1, T2> valueVector = (ValueVector2<T1, T2>)obj;
+
+                if (!this.X.Equals(valueVector.X)) 
+                {
+                    return false;
+                }
+                if (!this.Y.Equals(valueVector.Y))
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        public bool Equals(ValueVector2<T1,T2> valueVector)
+        {
+            return X.Equals(valueVector.X) && Y.Equals(valueVector.Y);
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(X);
+            hash.Add(Y);
+            return hash.ToHashCode();
+        }
 
         public override string ToString()
         {
             return "vv[" + X + "," + Y + "]";
         }
-    }
-
-    public class ValueVector2<T>: ValueVector2<T, T> {
-        public ValueVector2(T xValue, T yValue)
-        {
-            X = xValue;
-            Y = yValue;
-        }
-
-        public ValueVector2() { }
     }
 }

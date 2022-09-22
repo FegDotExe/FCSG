@@ -24,4 +24,9 @@ namespace FCSG{
 
     public delegate bool InputDelegate(object lambdaArgument);
     public delegate bool ControllerDelegate(PlayerIndex playerIndex);
+
+    /// <summary>
+    /// A simple delegate mostly used to run other functions.
+    /// </summary>
+    public delegate void SimpleDelegate();
 }
