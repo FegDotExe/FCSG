@@ -20,7 +20,7 @@ namespace FCSG{
             }
 
             spriteBatch.Begin(spriteBatchParameters);
-            sprite.BasicDraw(spriteBatch,drawMiddle:false);
+            sprite.BasicDraw(spriteBatch);
             spriteBatch.End();
 
             spriteBatch.GraphicsDevice.SetRenderTarget(null);
@@ -80,7 +80,7 @@ namespace FCSG{
 
             spriteBatch.Begin(spriteBatchParameters);
             foreach(SpriteBase sprite in sprites.objects){
-                sprite.BasicDraw(spriteBatch, drawMiddle:false);
+                sprite.BasicDraw(spriteBatch);
             }
             spriteBatch.End();
 
@@ -101,7 +101,7 @@ namespace FCSG{
 
             spriteBatch.Begin(spriteBatchParameters);
             foreach(SpriteBase sprite in sprites){
-                sprite.BasicDraw(spriteBatch, drawMiddle:false);
+                sprite.BasicDraw(spriteBatch);
             }
             spriteBatch.End();
 

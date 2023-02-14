@@ -32,6 +32,10 @@ namespace FCSG
             Y = y;
             Z = z;
         }
+
+        /// <summary>
+        /// Initialize a <c>ValueVector3</c> without setting any value for any coordinate. This constructor is strongly discouraged.
+        /// </summary>
         public ValueVector3() { }
     }
 }

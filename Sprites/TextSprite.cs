@@ -43,8 +43,16 @@ namespace FCSG{
             Center,
             Right
         }
+        public enum LayoutHeight
+        {
+            Top,
+            Center,
+            Bottom
+        }
+        
         public WrapMode wrapMode;
         public LayoutMode layoutMode;
+        public LayoutHeight layoutHeight;
         private int _offsetX; //Offset of the text when Elaborated
         public int offsetX{
             get{
@@ -100,6 +108,7 @@ namespace FCSG{
 
             this.wrapMode = spriteParameters.wrapMode;
             this.layoutMode = spriteParameters.layoutMode;
+            layoutHeight = spriteParameters.layoutHeight;
             this._offsetX = spriteParameters.offsetX;
             this._offsetY = spriteParameters.offsetY;
             
@@ -129,6 +138,23 @@ namespace FCSG{
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin(this.textBatchParameters);
 
+            int y = 0; //Starting y coordinate; depends on the chosen layoutHeight
+
+            switch (layoutHeight)
+            {
+                case LayoutHeight.Top:
+                    x = 0;
+                    break;
+                case LayoutHeight.Center:
+                    int totalHeight = height * lines.Count;
+                    y = (originalHeight - totalHeight) / 2;
+                    break;
+                case LayoutHeight.Bottom:
+                    totalHeight = height * lines.Count;
+                    y = originalHeight - totalHeight;
+                    break;
+            }
+
             foreach(string lineText in lines){
                 int x=0;
                 switch(layoutMode){
@@ -142,7 +168,7 @@ namespace FCSG{
                         x=(int)(originalWidthVariable.Get()-font.MeasureString(lineText).X);
                         break;
                 }
-                spriteBatch.DrawString(font,lineText,new Vector2(x+offsetX,(line*height)+offsetY),Color.White);
+                spriteBatch.DrawString(font,lineText,new Vector2(x+offsetX,y+(line*height)+offsetY),Color.White);
                 line++;
             }
 
@@ -237,15 +263,12 @@ namespace FCSG{
             originalWidthVariable.Unlink();
         }
 
-        public override void Draw(bool drawMiddle=true){
-            BasicDraw(this.spriteBatch,drawMiddle);
+        public override void Draw(){
+            spriteBatch.Draw(texture, new Rectangle(this.x, this.y, this.width, this.height), null, color, rotation, origin, effects, (float)depth);
         }
-        public override void BasicDraw(SpriteBatch spriteBatch, bool drawMiddle = true)
+        public override void BasicDraw(SpriteBatch spriteBatch)
         {
             if(draw){
-                if(drawMiddle==true){
-                    DrawMiddleTexture();
-                }
                 spriteBatch.Draw(texture, new Rectangle(this.x,this.y,this.width,this.height),null,color,rotation,origin,effects,(float)depth);
             }
         }

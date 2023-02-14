@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FCSG{
     /// <summary>
@@ -8,12 +9,13 @@ namespace FCSG{
         public int? layerCount=null;
         public List<SpriteBase> objects;
         private DoubleSpriteBaseDelegate comparer;
+        private static DoubleSpriteBaseDelegate defaultComparer = (SpriteBase sb) => (float)sb.depth;
         /// <summary>
         /// Construct a new LayerGroup which will sort its sprites by their depth
         /// </summary>
         public LayerGroup(){
             objects=new List<SpriteBase>();
-            comparer=(SpriteBase sb)=>(float)sb.depth;
+            comparer=defaultComparer;
         }
         /// <summary>
         /// Construct a new LayerGroup which will sort its sprites by the given delegate
@@ -31,21 +33,21 @@ namespace FCSG{
                 layerCount++;
             }
         }
+        /// <summary>
+        /// Adds the given sprite to the LayerGroup, keeping it ordered by its depth using a variant of insertion sort
+        /// </summary>
         private void Add(SpriteBase sprite, List<SpriteBase> objects){
-            if(objects.Count==0){
-                objects.Add(sprite);
-            }else{
-                int i=0;
-                for(i=objects.Count; i>0 && comparer(objects[i-1])<comparer(sprite); i--){
-                    objects.Insert(i,objects[i-1]);
-                }
-                if(objects.Count==i){ //This covers the edge case in which the index of the object which should be added is out of bounds.
-                    objects.Add(sprite);
-                }
-                else{
-                    objects[i]=sprite;
-                }
+            objects.Add(sprite);
+            int i = objects.Count - 2;
+
+            while(i>=0 && comparer(objects[i])<comparer(sprite)){
+                objects[i+1] = objects[i];
+                i--;
             }
+
+            //Debug.WriteLine(i + "/" + (objects.Count - 1));
+
+            objects[i + 1] = sprite;
         }
 
         /// <summary>
@@ -71,6 +73,10 @@ namespace FCSG{
 
         public static implicit operator List<SpriteBase>(LayerGroup group){
             return group.objects;
+        }
+        public SpriteBase[] ToArray()
+        {
+            return objects.ToArray();
         }
     }
 }

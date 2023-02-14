@@ -1,5 +1,12 @@
 ﻿namespace FCSG
 {
+    /// <summary>
+    /// A class to handle generic input.
+    /// Most of this class' is determined by its <see cref="Pressed(object)"/> method: all the other methods are automatically derived by its definition.
+    /// <para>
+    /// The method <see cref="Update(object)"/> should be called at each update cycle so that the value for the last press stays updated.
+    /// </para>
+    /// </summary>
     public class InputHandler
     {
         protected bool lastPress=false; //Value of the last pressed call

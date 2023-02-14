@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System;
 using System.Diagnostics;
-
+using System.Linq;
 
 namespace FCSG{
     /// <summary>
@@ -62,13 +62,12 @@ namespace FCSG{
         protected List<ObjectGroup<SpriteObject>> groups{get;set;}
         //Click delegates
         #region ClickDelegates
-        protected ClickDelegate _leftClickDelegate;
-        public ClickDelegate leftClickDelegate{
+        public ClickSetting leftClickDelegate{
             get{
-                return _leftClickDelegate;
+                return clickArray[(int)Clicks.Left];
             }
             set{
-                _leftClickDelegate = value;
+                clickArray[(int)Clicks.Left] = value;
                 if(value!=null){
                     wrapper.leftClick.Add(this);
                     UpdateCollisionRectangle();
@@ -77,13 +76,12 @@ namespace FCSG{
                 }
             }
         }
-        protected ClickDelegate _middleClickDelegate;
-        public ClickDelegate middleClickDelegate{
+        public ClickSetting middleClickDelegate{
             get{
-                return _middleClickDelegate;
+                return clickArray[(int)Clicks.Middle];
             }
             set{
-                _middleClickDelegate = value;
+                clickArray[(int)Clicks.Middle] = value;
                 if(value!=null){
                     wrapper.middleClick.Add(this);
                     UpdateCollisionRectangle();
@@ -93,13 +91,12 @@ namespace FCSG{
                 }
             }
         }
-        protected ClickDelegate _rightClickDelegate;
-        public ClickDelegate rightClickDelegate{
+        public ClickSetting rightClickDelegate{
             get{
-                return _rightClickDelegate;
+                return clickArray[(int)Clicks.Right];
             }
             set{
-                _rightClickDelegate = value;
+                clickArray[(int)Clicks.Right] = value;
                 if(value!=null){
                     wrapper.rightClick.Add(this);
                     UpdateCollisionRectangle();
@@ -109,13 +106,12 @@ namespace FCSG{
                 }
             }
         }
-        protected ClickDelegate _wheelHoverDelegate;
-        public ClickDelegate wheelHoverDelegate{
+        public ClickSetting wheelHoverDelegate{
             get{
-                return _wheelHoverDelegate;
+                return clickArray[(int)Clicks.WheelHover];
             }
             set{
-                _wheelHoverDelegate = value;
+                clickArray[(int)Clicks.WheelHover] = value;
                 if(value!=null){
                     wrapper.wheelHover.Add(this);
                     UpdateCollisionRectangle();
@@ -125,13 +121,12 @@ namespace FCSG{
                 }
             }
         }
-        protected ClickDelegate _hoverDelegate;
-        public ClickDelegate hoverDelegate{
+        public ClickSetting hoverDelegate{
             get{
-                return _hoverDelegate;
+                return clickArray[(int)Clicks.Hover];
             }
             set{
-                _hoverDelegate = value;
+                clickArray[(int)Clicks.Hover] = value;
                 if(value!=null){
                     wrapper.hover.Add(this);
                     UpdateCollisionRectangle();
@@ -141,9 +136,10 @@ namespace FCSG{
                 }
             }
         }
+        public ClickSetting?[] clickArray = new ClickSetting?[1+(int)Enum.GetValues(typeof(Clicks)).Cast<Clicks>().Last<Clicks>()];
         #endregion ClickDelegates
-        
-        protected bool precise; //Whether precise clicking is on or off
+
+        protected PrecisionSetting precision; //Whether precise clicking is on or off
 
         public Dictionary<string,object> variables{get; set;}
 
@@ -262,13 +258,13 @@ namespace FCSG{
             this.color=spriteParameters.color;
 
             //Click delegates
-                this._leftClickDelegate = spriteParameters.leftClickDelegate;
-                this._middleClickDelegate = spriteParameters.middleClickDelegate;
-                this._rightClickDelegate = spriteParameters.rightClickDelegate;
-                this._wheelHoverDelegate = spriteParameters.wheelHoverDelegate;
-                this._hoverDelegate = spriteParameters.hoverDelegate;
+                clickArray[(int)Clicks.Left] = spriteParameters.leftClickDelegate;
+                clickArray[(int)Clicks.Middle] = spriteParameters.middleClickDelegate;
+                clickArray[(int)Clicks.Right] = spriteParameters.rightClickDelegate;
+                clickArray[(int)Clicks.WheelHover] = spriteParameters.wheelHoverDelegate;
+                clickArray[(int)Clicks.Hover] = spriteParameters.hoverDelegate;
                 
-                this.precise=spriteParameters.precise;
+                this.precision=spriteParameters.precision;
 
                 UpdateCollisionRectangle();
 
@@ -289,18 +285,14 @@ namespace FCSG{
             this.draw=true;
         }
         #endregion Constructors
-        public virtual void Draw(bool drawMiddle=true){
-            BasicDraw(this.spriteBatch,drawMiddle);
+        public virtual void Draw(){
+            BasicDraw(this.spriteBatch);
         }
 
         /// <summary>
         /// The bare skeleton of the draw method. Should be used in every context in which a custom spriteBatch is used (== everywhere except in Wrapper)
         /// </summary>
-        public virtual void BasicDraw(SpriteBatch spriteBatch, bool drawMiddle=true){
-            if(drawMiddle==true){
-                DrawMiddleTexture();
-            }
-        }
+        public virtual void BasicDraw(SpriteBatch spriteBatch){}
 
         ///<summary>
         ///Resizes the texture to the size of the sprite, so that there is no need to resize it every frame; should improve performance.
@@ -316,6 +308,10 @@ namespace FCSG{
 
                 RenderTarget2D renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice,width,height);
                 Utilities.DrawOntoTarget(renderTarget,this,spriteBatch);
+                if (middleTexture != null) 
+                {
+                    middleTexture.Dispose();
+                }
                 middleTexture = renderTarget;
             }
         }
@@ -350,39 +346,10 @@ namespace FCSG{
         }
 
         ///<summary>
-        ///Checks if the sprite is colliding with another sprite and triggers the right click delegate.
+        ///Checks if the sprite would be clicked at the given coordinates. Similar to <see cref="CollidesWith(int, int)"/> but also checks precisely in case <see cref="precise"/> is <c>true</c>.
         ///</summary>
-        public bool Clicked(int x, int y, Clicks clickType){
-            if((!precise && this.CollidesWith(x,y))||(precise && this.CollidesWith(x,y) && this.IsolateTexture().GetPixel(x,y).A!=0)){ //TODO: a complete resize is needed: there should be a rendertarget to test for precise click.
-                switch(clickType){
-                    case Clicks.Left:
-                        if(leftClickDelegate!=null){
-                            return leftClickDelegate(this,x,y);
-                        }
-                        return true;
-                    case Clicks.Middle:
-                        if(middleClickDelegate!=null){
-                            return middleClickDelegate(this,x,y);
-                        }
-                        return true;
-                    case Clicks.Right:
-                        if(rightClickDelegate!=null){
-                            return rightClickDelegate(this,x,y);
-                        }
-                        return true;
-                    case Clicks.WheelHover:
-                        if(wheelHoverDelegate!=null){
-                            return wheelHoverDelegate(this,x,y);
-                        }
-                        return true;
-                    case Clicks.Hover:
-                        if(hoverDelegate!=null){
-                            return hoverDelegate(this,x,y);
-                        }
-                        return true;
-                }
-            }
-            return true;
+        public bool Clicked(int x, int y){
+            return ((precision==PrecisionSetting.Collision) && this.CollidesWith(x, y)) || ((precision==PrecisionSetting.ActualTexture) && CollidesWith(x, y) && GetPixelNotRelative(x,y).A != 0) || ((precision==PrecisionSetting.ApproxTexture) && CollidesWith(x,y) && GetPixelNotRelative(x, y).A != 0);
         }
 
         ///<summary>
@@ -394,6 +361,40 @@ namespace FCSG{
             return renderTarget;
         }
     
+        /// <summary>
+        /// Draws this and only this texture to a new texture of the size of this sprite (width,height).
+        /// <para>!!The given texture should then be disposed of using <c>Texture2D.Dispose()</c>!!</para>
+        /// </summary>
+        /// <param name="realTexture">If true, the texture is not resized to its present (width,height) and instead keeps its original dimensions.</param>
+        /// <returns>The drawn texture on a trasparent background if implemented. Otherwise, it returns a trasparent texture.</returns>
+        protected virtual Texture2D SingleTexture(bool realTexture=false)
+        {
+            RenderTarget2D renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice, width, height);
+            return renderTarget;
+        }
+
+        /// <summary>
+        /// Get the color of a pixel at the given coordinates, relatively to the whole screen.
+        /// </summary>
+        /// <param name="x">The x coordinate</param>
+        /// <param name="y">The y coordinate</param>
+        /// <returns>The color of the given pixel if the coordinates are in range; a black color with full opacity otherwise.</returns>
+        public Color GetPixelNotRelative(int x, int y, bool approximate=false)
+        {
+            int relativeX = x - this.x;
+            int relativeY = y - this.y;
+
+            if (approximate)
+            {
+                relativeX = (relativeX * texture.Width) / width;
+                relativeY = (relativeY * texture.Height) / height;
+            }
+            Texture2D singleTexture = SingleTexture(approximate);
+            Color pixel = singleTexture.GetPixel(relativeX, relativeY);
+            singleTexture.Dispose();
+            return pixel;
+        }
+
         private void UpdateCollisionRectangle()
         {
             if (this.leftClickDelegate == null && this.middleClickDelegate == null && this.rightClickDelegate == null && this.wheelHoverDelegate == null && this.hoverDelegate == null)
@@ -405,5 +406,12 @@ namespace FCSG{
                 collisionRectangle = new CollisionRectangle(this);
             }
         }
+    }
+
+    public enum PrecisionSetting
+    {
+        Collision,
+        ApproxTexture,
+        ActualTexture
     }
 }

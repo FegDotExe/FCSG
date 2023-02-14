@@ -11,6 +11,7 @@ namespace FCSG{
         public string text;
         public TextSprite.WrapMode wrapMode;
         public TextSprite.LayoutMode layoutMode;
+        public TextSprite.LayoutHeight layoutHeight;
         public int offsetX; //Only for TextSprite
         public int offsetY; //Only for TextSprite
         public LinkedVariableParams<int> originalWidthVariable; //Only for TextSprite
@@ -31,23 +32,41 @@ namespace FCSG{
         public Color color;
         public ObjectGroup<SpriteObject> group;
         public List<ObjectGroup<SpriteObject>> groups;
-        public ClickDelegate leftClickDelegate;
-        public ClickDelegate middleClickDelegate;
-        public ClickDelegate rightClickDelegate;
-        public ClickDelegate wheelHoverDelegate;
-        public ClickDelegate hoverDelegate;
+        public ClickSetting leftClickDelegate;
+        public ClickSetting middleClickDelegate;
+        public ClickSetting rightClickDelegate;
+        public ClickSetting wheelHoverDelegate;
+        public ClickSetting hoverDelegate;
         public Dictionary<string, SpriteBase> spritesDict;
         public string dictKey;
         public CollisionRectangle collisionRectangle;
-        public bool precise; //Wether clicks should be pixel-precise or not.
+        public PrecisionSetting precision; //Wether clicks should be pixel-precise or not.
         public Dictionary<string,object> variables;
         public SpriteBatchParameters textBatchParameters; //Used to draw the text sub-texture in TextSprite.
 
         #endregion Fields
         #region Constructor
 
-        /// <param name="depth">The depth of the sprite. The higher the number, the closer to the camera. The value can vary between 1 and 0.</param>
-        /// <param name="xDelegate">The delegate which returns the x position of the sprite.</param>
+
+        /// <summary>
+        /// Constructor for SpriteParameters.
+        /// </summary>
+        /// <param name="spriteBatch">The sprite batch used to draw sprites.</param>
+        /// <param name="texture">The texture which will be drawn. In FCSG, this is only used in <see cref="Sprite"/>.</param>
+        /// <param name="font">The font which will be used to display text. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="text">The default displayed text. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="wrapMode">How the text is wrapped. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="layoutMode">How the text is displayed in the x axis. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="layoutHeight">How the text is displayed in the y axis. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="offsetX">The x offset used to draw the base text texture. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="offsetY">The y offset used to draw the base text texture. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="originalWidthVariable">The linked variable used to determine the width of the base text texture; it is retrieved at <see cref="TextSprite.ElaborateTexture(bool,bool)"/> when <c>reloadDimension</c> is true. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="originalHeightVariable">The linked variable used to determine the height of the base text texture; it is retrieved at <see cref="TextSprite.ElaborateTexture(bool,bool)"/> when <c>reloadDimension</c> is true. In FCSG, this is only used in <see cref="TextSprite"/>.</param>
+        /// <param name="wrapper">The wrapper this sprite will be added to. This parameter is extremely useful for child classes which make use of the wrapper in their constructor or generally before the sprite can actually be added to a wrapper.</param>
+        /// <param name="depth">The depth of the sprite. The higher the number, the closer to the camera. The value can vary between 1 and 0. This will give a set value to <see cref="SpriteBase.depthVariable"/>.</param>
+        /// <param name="depthVariable">The parameters of the depth variable for this sprite. The higher the number, the closer to the camera. The value can vary between 1 and 0.</param>
+        /// <param name="xVariable">The parameters of the x variable for this sprite. This determines the x position of the sprite and is retreived at every <see cref="SpriteBase.Draw(bool)"/>.</param>
+        /// <param name="x">This determines the x position of the sprite; it will give a set value to <see cref="SpriteBase.xVariable"/>.</param>
         /// <param name="yDelegate">The delegate which returns the y position of the sprite.</param>
         /// <param name="widthDelegate">The delegate which returns the width of the sprite.</param>
         /// <param name="heightDelegate">The delegate which returns the height of the sprite.</param>
@@ -63,16 +82,14 @@ namespace FCSG{
         /// <param name="hoverDelegate">The delegate which will be called when the mouse is over the sprite.</param>
         /// <param name="spritesDict">A dictionary to which the sprite will be added once constructed.</param>
         /// <param name="dictKey">The key the dictionary will use when inserted in the <c>spritesDict</c></param>
-        /// <summary>
-        /// Constructor for SpriteParameters.
-        /// </summary>
         public SpriteParameters(
-            SpriteBatch spriteBatch=null,
-            Texture2D texture=null, //Only for Sprite
-            SpriteFont font=null, //Only for TextSprite
-            string text=null, //Only for TextSprite
-            TextSprite.WrapMode wrapMode=TextSprite.WrapMode.Word, //Only for TextSprite
-            TextSprite.LayoutMode layoutMode=TextSprite.LayoutMode.Left, //Only for TextSprite
+            SpriteBatch spriteBatch = null,
+            Texture2D texture = null, //Only for Sprite
+            SpriteFont font = null, //Only for TextSprite
+            string text = null, //Only for TextSprite
+            TextSprite.WrapMode wrapMode = TextSprite.WrapMode.Word, //Only for TextSprite
+            TextSprite.LayoutMode layoutMode = TextSprite.LayoutMode.Left, //Only for TextSprite
+            TextSprite.LayoutHeight layoutHeight = TextSprite.LayoutHeight.Top,
             int offsetX=0, //Only for TextSprite
             int offsetY=0, //Only for TextSprite
             LinkedVariableParams<int> originalWidthVariable=null, //Only for TextSprite
@@ -93,12 +110,12 @@ namespace FCSG{
             Color? color=null,
             ObjectGroup<SpriteObject> group=null,
             List<ObjectGroup<SpriteObject>> groups=null,
-            ClickDelegate leftClickDelegate=null,
-            ClickDelegate middleClickDelegate=null,
-            ClickDelegate rightClickDelegate=null,
-            ClickDelegate wheelHoverDelegate=null,
-            ClickDelegate hoverDelegate=null,
-            bool precise=false,
+            ClickSetting leftClickDelegate=null,
+            ClickSetting middleClickDelegate=null,
+            ClickSetting rightClickDelegate=null,
+            ClickSetting wheelHoverDelegate=null,
+            ClickSetting hoverDelegate=null,
+            PrecisionSetting precision=PrecisionSetting.Collision,
             Dictionary<string, SpriteBase> spritesDict=null,
             string dictKey=null,
             CollisionRectangle collisionRectangle=null,
@@ -112,6 +129,7 @@ namespace FCSG{
             this.text=text;
             this.wrapMode=wrapMode;
             this.layoutMode=layoutMode;
+            this.layoutHeight = layoutHeight;
             this.offsetX=offsetX;
             this.offsetY=offsetY;
             this.originalWidthVariable=originalWidthVariable;
@@ -148,7 +166,7 @@ namespace FCSG{
                 this.rightClickDelegate = rightClickDelegate;
                 this.wheelHoverDelegate = wheelHoverDelegate;
                 this.hoverDelegate = hoverDelegate;
-            this.precise=precise;
+            this.precision=precision;
 
             //Origin
             if(origin!=null){
@@ -175,12 +193,14 @@ namespace FCSG{
             output.text=Utilities.Choose<string>(sp1.text,sp2.text);
             output.wrapMode=Utilities.Choose<TextSprite.WrapMode>(sp1.wrapMode,sp2.wrapMode);
             output.layoutMode=Utilities.Choose<TextSprite.LayoutMode>(sp1.layoutMode,sp2.layoutMode);
+            output.layoutHeight = Utilities.Choose(sp1.layoutHeight, sp2.layoutHeight);
             output.offsetX=Utilities.Choose<int>(sp1.offsetX,sp2.offsetX);
             output.offsetY=Utilities.Choose<int>(sp1.offsetY,sp2.offsetY);
             output.originalWidthVariable=Utilities.Choose(sp1.originalWidthVariable,sp2.originalWidthVariable);
             output.originalHeightVariable=Utilities.Choose(sp1.originalHeightVariable,sp2.originalHeightVariable);
             output.wrapper=Utilities.Choose(sp1.wrapper,sp2.wrapper);
             output.depth=Utilities.Choose(sp1.depth,sp2.depth);
+            output.depthVariable = Utilities.Choose(sp1.depthVariable, sp2.depthVariable);
             output.xVariable=Utilities.Choose(sp1.xVariable,sp2.xVariable);
             output.x=Utilities.Choose(sp1.x,sp2.x);
             output.yVariable=Utilities.Choose(sp1.yVariable,sp2.yVariable);
@@ -202,6 +222,9 @@ namespace FCSG{
             output.spritesDict=Utilities.Choose(sp1.spritesDict,sp2.spritesDict);
             output.dictKey=Utilities.Choose(sp1.dictKey,sp2.dictKey);
             output.collisionRectangle=Utilities.Choose(sp1.collisionRectangle,sp2.collisionRectangle);
+            output.precision = Utilities.Choose(sp1.precision, sp2.precision);
+            output.variables = Utilities.Choose(sp1.variables, sp2.variables);
+            output.textBatchParameters = Utilities.Choose(sp1.textBatchParameters, sp2.textBatchParameters);
 
             return output;
         }

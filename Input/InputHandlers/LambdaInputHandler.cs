@@ -12,7 +12,7 @@ namespace FCSG
         private readonly InputDelegate inputDelegate;
 
         /// <summary>
-        /// Construct a new input hanlder which works with lambdas
+        /// Construct a new input hanlder which works with lambdas. If the lambda returns <c>true</c>, this input handler is considered as pressed.
         /// </summary>
         /// <param name="inputDelegate">A normal delegate</param>
         /// <param name="controllerDelegate">A special delegate used for controller inputs. When using this parameter, checks for the lambdaArgument to be a PlayerIndex are implicitly added. Usually, a lambda of this kind is <c>(PlayerIndex playerIndex)=>GamePad.GetState(playerIndex).Buttons.A == ButtonState.Pressed</c></param>

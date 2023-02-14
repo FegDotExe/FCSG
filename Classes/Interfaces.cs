@@ -7,7 +7,7 @@ namespace FCSG{
         int y{get;set;}
         int width{get;}
         int height{get;}
-        void Draw(bool drawMiddle=true);
+        void Draw();
     }
 
     ///<summary>
