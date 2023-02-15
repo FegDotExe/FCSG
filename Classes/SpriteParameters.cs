@@ -185,7 +185,17 @@ namespace FCSG{
         #endregion Constructor
     
         #region Operators
+        /// <summary>
+        /// Sums two spriteparameters. If the second operator has a property, than that property will be the one considered in the end.
+        /// </summary>
+        /// <param name="sp1">The first sprite parameter</param>
+        /// <param name="sp2">the second sprite parameter</param>
+        /// <returns>A sprite parameter result of the sum of the two given sprite parameters</returns>
         public static SpriteParameters operator +(SpriteParameters sp1, SpriteParameters sp2){
+            if (sp2 == null)
+            {
+                return sp1;
+            }
             SpriteParameters output=new SpriteParameters();
             output.spriteBatch=Utilities.Choose<SpriteBatch>(sp1.spriteBatch,sp2.spriteBatch);
             output.texture=Utilities.Choose<Texture2D>(sp1.texture,sp2.texture);

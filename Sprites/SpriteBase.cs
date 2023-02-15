@@ -158,12 +158,6 @@ namespace FCSG{
             }
             this.spriteBatch = spriteParameters.spriteBatch;
 
-            this.wrapper = spriteParameters.wrapper;
-            //Add to wrapper
-            if(this.wrapper!=null){
-                this.wrapper.Add(this);
-            }
-
             if (spriteParameters.variables != null)
             {
                 this.variables = spriteParameters.variables;
@@ -283,6 +277,13 @@ namespace FCSG{
             }
 
             this.draw=true;
+
+            this.wrapper = spriteParameters.wrapper;
+            //Add to wrapper
+            if (this.wrapper != null)
+            {
+                this.wrapper.Add(this);
+            }
         }
         #endregion Constructors
         public virtual void Draw(){
@@ -293,28 +294,6 @@ namespace FCSG{
         /// The bare skeleton of the draw method. Should be used in every context in which a custom spriteBatch is used (== everywhere except in Wrapper)
         /// </summary>
         public virtual void BasicDraw(SpriteBatch spriteBatch){}
-
-        ///<summary>
-        ///Resizes the texture to the size of the sprite, so that there is no need to resize it every frame; should improve performance.
-        ///</summary>
-        public virtual void DrawMiddleTexture(){
-            if(midWidth!=width || midHeight!=height){
-                // Console.WriteLine("Called a sprite resize: w="+midWidth+"/"+width+" h="+midHeight+"/"+height);
-
-                midWidth=width;
-                midHeight=height;
-
-                // Console.WriteLine("After var update: w="+midWidth+"/"+width+" h="+midHeight+"/"+height);
-
-                RenderTarget2D renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice,width,height);
-                Utilities.DrawOntoTarget(renderTarget,this,spriteBatch);
-                if (middleTexture != null) 
-                {
-                    middleTexture.Dispose();
-                }
-                middleTexture = renderTarget;
-            }
-        }
     
         /// <summary>
         /// Completely handles removal of sprite from the wrapper it is linked to, by using <c>Wrapper.Remove(SpriteBase)</c>
