@@ -48,7 +48,7 @@ namespace FCSG{
         /// <summary>
         /// Draws the given textures on the target. In order to draw, it uses the simplest Draw function possible (position at 0,0 and white as color), and goes from first to last texture in list
         /// </summary>
-        public static void DrawOntoTarget(RenderTarget2D renderTarget, List<Texture2D> textures, SpriteBatch spriteBatch,SpriteBatchParameters spriteBatchParameters=null){
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, Texture2D[] textures, SpriteBatch spriteBatch,SpriteBatchParameters spriteBatchParameters=null){
             spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
@@ -64,6 +64,11 @@ namespace FCSG{
             spriteBatch.End();
 
             spriteBatch.GraphicsDevice.SetRenderTarget(null);
+        }
+
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, List<Texture2D> textures, SpriteBatch spriteBatch, SpriteBatchParameters spriteBatchParameters = null)
+        {
+            DrawOntoTarget(renderTarget, textures.ToArray(), spriteBatch, spriteBatchParameters);
         }
 
         /// <summary>

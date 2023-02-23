@@ -22,7 +22,7 @@ namespace FCSG{
         public Wrapper(SpriteBatch spriteBatch, SpriteBatchParameters spriteBatchParams=null){
             this.spriteBatch = spriteBatch;
             if(this.spriteBatchParams==null){
-                this.spriteBatchParams=new SpriteBatchParameters(sortMode:SpriteSortMode.FrontToBack,samplerState:SamplerState.PointClamp);
+                this.spriteBatchParams = new SpriteBatchParameters(sortMode: SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.PointClamp);
             }else{
                 this.spriteBatchParams=spriteBatchParams;
             }
